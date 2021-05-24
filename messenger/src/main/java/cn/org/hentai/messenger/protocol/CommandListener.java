@@ -33,10 +33,11 @@ public class CommandListener implements Runnable {
         serverAddr = Configs.get("server.addr");
         iowaitTimeout = Configs.getInt("server.test-packet.timeout", 20000);
 
-        Log.info("主机ID: " + hostId);
-        Log.info("访问令牌: " + accessToken);
-        Log.info("服务器地址: " + serverAddr);
-        Log.info("服务器端口: " + serverPort);
+        Log.info("host ID: " + hostId);
+        // 访问令牌
+        Log.info("accessToken: " + accessToken);
+        Log.info("serverAddr: " + serverAddr);
+        Log.info("serverPort: " + serverPort);
     }
 
     // 待命
@@ -52,7 +53,8 @@ public class CommandListener implements Runnable {
         outputStream.write(packet);
         outputStream.flush();
         Packet.read(inputStream, true);
-        Log.debug("已连接到服务器端...");
+        // 已连接到服务器端...
+        Log.debug("connected to server...");
         lastExchangeTime = System.currentTimeMillis();
 
         // 2. 等待服务器的心跳测试包或是指令包
@@ -80,14 +82,15 @@ public class CommandListener implements Runnable {
                 String nonce = new String(data, 8, 64);
                 int len = (int) (data[8 + 64] & 0xff);
                 String hostIp = new String(data, 8 + 64 + 1, len);
-                Log.debug("请求转发: " + hostIp + ":" + port);
+                //Log.debug("请求转发: " + hostIp + ":" + port);
+                Log.debug("request forward: " + hostIp + ":" + port);
                 ForwardWorker worker = new ForwardWorker(seqId, hostIp, port, nonce);
                 SessionManager.getInstance().register(worker);
                 worker.start();
                 outputStream.write(Packet.create(hostId, Packet.ENCRYPT_TYPE_DES, new ForwardRespCommand(), accessToken));
             }
         }
-        Log.debug("己断开连接...");
+        Log.debug("disconnecting 己断开连接...");
         try {
             inputStream.close();
         } catch (Exception e) {
