@@ -5,8 +5,7 @@ import cn.org.hentai.server.util.db.Transient;
 /**
  * Created by Expect on 2017/12/27.
  */
-public class Host extends BaseModel
-{
+public class Host extends BaseModel {
     private int id;
     private int userId;
     private String name;

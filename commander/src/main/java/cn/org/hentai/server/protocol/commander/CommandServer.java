@@ -11,22 +11,17 @@ import java.net.Socket;
  * Created by Expect on 2018/1/25.
  * 指令服务，负责通知主机开始端口转发等
  */
-public class CommandServer implements Runnable
-{
-    public void run()
-    {
+public class CommandServer implements Runnable {
+    public void run() {
         int listenPort;
         ServerSocket server = null;
-        try
-        {
+        try {
             listenPort = Configs.getInt("server.command.port", 1212);
             server = new ServerSocket(listenPort, 1000, InetAddress.getByName("0.0.0.0"));
             Log.debug("指令服务器监听于: " + listenPort);
-            while (true)
-            {
+            while (true) {
                 Socket client = server.accept();
-                if (Thread.interrupted())
-                {
+                if (Thread.interrupted()) {
                     client.close();
                     break;
                 }
@@ -34,9 +29,7 @@ public class CommandServer implements Runnable
                 session.start();
             }
             server.close();
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             Log.error(e);
         }
     }

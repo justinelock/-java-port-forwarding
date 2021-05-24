@@ -10,44 +10,36 @@ import java.util.List;
  * Created by matrixy on 2017/12/13.
  */
 @Repository
-public class UserDAO extends DBAccess
-{
-    public User getById(long id)
-    {
+public class UserDAO extends DBAccess {
+    public User getById(long id) {
         return select().byId(id).query(User.class);
     }
 
-    public User getByName(String name)
-    {
+    public User getByName(String name) {
         return select().where(clause("name = ?", name)).query(User.class);
     }
 
-    public long update(User user)
-    {
+    public long update(User user) {
         return update().valueWith(user).byId().execute();
     }
 
-    public int save(User user)
-    {
+    public int save(User user) {
         int id = insertInto().valueWith(user).save();
         user.setId(id);
         return id;
     }
 
-    public List<User> find(String name)
-    {
+    public List<User> find(String name) {
         return select().where(clause("name like ?", like(name))).orderBy("id", "desc").queryForList(User.class);
     }
 
     @Override
-    public String[] configureFields()
-    {
-        return new String[] { "id", "name", "password", "salt", "accesstoken", "rand", "last_login_time", "last_login_ip" };
+    public String[] configureFields() {
+        return new String[]{"id", "name", "password", "salt", "accesstoken", "rand", "last_login_time", "last_login_ip"};
     }
 
     @Override
-    public String configureTableName()
-    {
+    public String configureTableName() {
         return "users";
     }
 }

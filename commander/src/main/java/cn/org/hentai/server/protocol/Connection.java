@@ -6,13 +6,11 @@ import java.util.Date;
 /**
  * Created by Expect on 2018/1/25.
  */
-public class Connection
-{
+public class Connection {
     private Socket socket;
     private long lastActiveTime;
 
-    public Connection(Socket socket)
-    {
+    public Connection(Socket socket) {
         this.socket = socket;
         this.lastActiveTime = System.currentTimeMillis();
     }
@@ -33,8 +31,7 @@ public class Connection
         this.lastActiveTime = lastActiveTime;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return "Connection: [" + socket.getInetAddress() + "], LastActiveTime: " + new Date(this.lastActiveTime).toLocaleString();
     }
 }

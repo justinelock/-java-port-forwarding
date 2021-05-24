@@ -7,43 +7,35 @@ import org.springframework.jdbc.core.JdbcTemplate;
 /**
  * Created by matrixy on 2016/12/21.
  */
-public class DBSQL
-{
+public class DBSQL {
     @Autowired
     protected JdbcTemplate jdbcTemplate;
 
-    public DBSQL()
-    {
+    public DBSQL() {
         this.jdbcTemplate = (JdbcTemplate) SpringManager.getApplicationContext().getBean("jdbcTemplate");
     }
 
-    protected void setJdbcTemplate(JdbcTemplate jdbcTemplate)
-    {
+    protected void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    protected JdbcTemplate getJdbcTemplate()
-    {
+    protected JdbcTemplate getJdbcTemplate() {
         return this.jdbcTemplate;
     }
 
-    public String toSQL()
-    {
+    public String toSQL() {
         return toSQL(true);
     }
 
-    protected String toSQL(boolean merged)
-    {
+    protected String toSQL(boolean merged) {
         return null;
     }
 
-    public String toPreparedSQL()
-    {
+    public String toPreparedSQL() {
         return null;
     }
 
-    public Integer execute()
-    {
+    public Integer execute() {
         return null;
     }
 
@@ -54,8 +46,7 @@ public class DBSQL
     }
     */
 
-    public <E> E query(String sql, Class<?> cls)
-    {
+    public <E> E query(String sql, Class<?> cls) {
         return null;
     }
 }

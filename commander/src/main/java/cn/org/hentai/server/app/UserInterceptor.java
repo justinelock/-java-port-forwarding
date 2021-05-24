@@ -13,20 +13,17 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by matrixy on 2017/8/26.
  */
-public class UserInterceptor extends HandlerInterceptorAdapter
-{
+public class UserInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     UserDAO userDAO;
 
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
-                             Object handler) throws Exception
-    {
+                             Object handler) throws Exception {
         // 获取登陆的用户身份
-        User user = (User)request.getSession().getAttribute("loginUser");
-        if (null == user)
-        {
+        User user = (User) request.getSession().getAttribute("loginUser");
+        if (null == user) {
             response.sendRedirect("/");
             return false;
         }
@@ -38,8 +35,7 @@ public class UserInterceptor extends HandlerInterceptorAdapter
     public void postHandle(HttpServletRequest request,
                            HttpServletResponse response,
                            Object handler,
-                           ModelAndView modelAndView) throws Exception
-    {
+                           ModelAndView modelAndView) throws Exception {
         // do nothing here...
     }
 }

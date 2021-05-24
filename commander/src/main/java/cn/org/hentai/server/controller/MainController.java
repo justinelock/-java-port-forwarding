@@ -27,8 +27,7 @@ import java.util.List;
  */
 
 @Controller
-public class MainController
-{
+public class MainController {
     @Autowired
     UserDAO userDAO;
 
@@ -41,31 +40,26 @@ public class MainController
     @Autowired
     HttpServletRequest request;
 
-    private User getLoginUser()
-    {
-        return (User)request.getAttribute("loginUser");
+    private User getLoginUser() {
+        return (User) request.getAttribute("loginUser");
     }
 
     @RequestMapping("/")
-    public String index()
-    {
+    public String index() {
         // boolean hasDB = new File("jforwarding.sqlite").exists();
         return "login";
     }
 
     @RequestMapping("/setup")
-    public String setup()
-    {
+    public String setup() {
         return "setup";
     }
 
     @RequestMapping("/login")
     @ResponseBody
-    public Result login(HttpSession session, @RequestParam String username, @RequestParam String password)
-    {
+    public Result login(HttpSession session, @RequestParam String username, @RequestParam String password) {
         Result result = new Result();
-        try
-        {
+        try {
             User user = userDAO.getByName(username);
             if (null == user) throw new RuntimeException("无此用户");
 
@@ -74,28 +68,23 @@ public class MainController
             if (!pwd.equals(user.getPassword())) throw new RuntimeException("用户名或密码错误");
 
             session.setAttribute("loginUser", user);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             result.setError(e);
         }
         return result;
     }
 
     @RequestMapping("/logout")
-    public String logout(HttpSession session, HttpServletRequest request, HttpServletResponse response)
-    {
+    public String logout(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
         session.removeAttribute("loginUser");
         return "/";
     }
 
     @RequestMapping("/manage/user/passwd/reset")
     @ResponseBody
-    public Result resetPasswd(@RequestParam String oldPwd, @RequestParam String password, @RequestParam String password2)
-    {
+    public Result resetPasswd(@RequestParam String oldPwd, @RequestParam String password, @RequestParam String password2) {
         Result result = new Result();
-        try
-        {
+        try {
             if (StringUtils.isEmpty(oldPwd)) throw new RuntimeException("请填写旧的登陆密码");
             if (StringUtils.isEmpty(password)) throw new RuntimeException("请填写新的登陆密码");
             if (!password.equals(password2)) throw new RuntimeException("两次输入的新的登陆密码不一致");
@@ -107,31 +96,26 @@ public class MainController
             user.setSalt(NonceStr.generate(12));
             user.setPassword(MD5.encode(password + "<===>" + user.getSalt()));
             userDAO.update(user);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             result.setError(e);
         }
         return result;
     }
 
     @RequestMapping("/manage/host")
-    public String host()
-    {
+    public String host() {
         return "host";
     }
 
     @RequestMapping("/manage/host/json")
     @ResponseBody
-    public Result hostJson(@RequestParam(required = false, defaultValue = "1") int pageIndex, @RequestParam(required = false, defaultValue = "50") int pageSize)
-    {
+    public Result hostJson(@RequestParam(required = false, defaultValue = "1") int pageIndex, @RequestParam(required = false, defaultValue = "50") int pageSize) {
         User user = this.getLoginUser();
         Result result = new Result();
         Page<Host> hosts = new Page(pageIndex, pageSize);
         List<Host> hostList = hostDAO.find(user.getId(), pageIndex, pageSize);
         HostConnectionManager mgr = HostConnectionManager.getInstance();
-        for (int i = 0; i < hostList.size(); i++)
-        {
+        for (int i = 0; i < hostList.size(); i++) {
             Host host = hostList.get(i);
             host.setOnline(mgr.isOnline(host.getId()));
             host.setIp(mgr.getHostIp(host.getId()));
@@ -144,12 +128,10 @@ public class MainController
 
     @RequestMapping("/manage/host/add")
     @ResponseBody
-    public Result addHost(@RequestParam String name)
-    {
+    public Result addHost(@RequestParam String name) {
         Result result = new Result();
 
-        try
-        {
+        try {
             Host host = new Host();
             host.setState(1);
             host.setUserId(this.getLoginUser().getId());
@@ -160,9 +142,7 @@ public class MainController
             hostDAO.save(host);
 
             result.setData(host);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             result.setError(e);
         }
         return result;
@@ -170,20 +150,16 @@ public class MainController
 
     @RequestMapping("/manage/host/renew")
     @ResponseBody
-    public Result renewHostToken(@RequestParam int id)
-    {
+    public Result renewHostToken(@RequestParam int id) {
         Result result = new Result();
-        try
-        {
+        try {
             Host host = hostDAO.getById(id);
             if (null == host) throw new RuntimeException("无此主机");
             if (host.getUserId() != this.getLoginUser().getId()) throw new RuntimeException("无权操作");
 
             host.setAccesstoken(NonceStr.generate(64));
             hostDAO.update(host);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             result.setError(e);
         }
         return result;
@@ -191,20 +167,16 @@ public class MainController
 
     @RequestMapping("/manage/host/rename")
     @ResponseBody
-    public Result renameHost(@RequestParam int id, @RequestParam String name)
-    {
+    public Result renameHost(@RequestParam int id, @RequestParam String name) {
         Result result = new Result();
-        try
-        {
+        try {
             Host host = hostDAO.getById(id);
             if (null == host) throw new RuntimeException("无此主机");
             if (host.getUserId() != this.getLoginUser().getId()) throw new RuntimeException("无权操作");
 
             host.setName(name);
             hostDAO.update(host);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             result.setError(e);
         }
         return result;
@@ -212,12 +184,10 @@ public class MainController
 
     @RequestMapping("/manage/host/remove")
     @ResponseBody
-    public Result removeHost(@RequestParam int id)
-    {
+    public Result removeHost(@RequestParam int id) {
         Result result = new Result();
 
-        try
-        {
+        try {
             Host host = hostDAO.getById(id);
             if (null == host) throw new RuntimeException("无此主机");
             if (host.getUserId() != this.getLoginUser().getId()) throw new RuntimeException("无权操作");
@@ -226,9 +196,7 @@ public class MainController
                 throw new RuntimeException("请先删除该主机下的所有端口转发配置");
 
             hostDAO.delete(id);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             result.setError(e);
         }
 
@@ -237,33 +205,27 @@ public class MainController
 
     // 端口管理
     @RequestMapping("/manage/port")
-    public String port(@RequestParam int hostId, Model model)
-    {
+    public String port(@RequestParam int hostId, Model model) {
         model.addAttribute("hostId", hostId);
         return "port";
     }
 
     @RequestMapping("/manage/port/json")
     @ResponseBody
-    public Result portJson(@RequestParam int hostId)
-    {
+    public Result portJson(@RequestParam int hostId) {
         Result result = new Result();
-        try
-        {
+        try {
             Page<Port> page = new Page(1, 10000);
             List<Port> portList = portDAO.list(this.getLoginUser().getId(), hostId);
             ProxyThreadManager mgr = ProxyThreadManager.getInstance();
-            for (int i = 0; i < portList.size(); i++)
-            {
+            for (int i = 0; i < portList.size(); i++) {
                 Port port = portList.get(i);
                 port.setOnline(mgr.isOnline(port.getListenPort()));
             }
             page.setList(portList);
             page.setRecordCount(portList.size());
             result.setData(page);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             result.setError(e);
         }
@@ -280,12 +242,10 @@ public class MainController
                        @RequestParam int hostPort,
                        @RequestParam(defaultValue = "30") int soTimeout,
                        @RequestParam(defaultValue = "30") int connectTimeout,
-                       @RequestParam(defaultValue = "10") int concurrentConnections)
-    {
+                       @RequestParam(defaultValue = "10") int concurrentConnections) {
         User user = this.getLoginUser();
         Result result = new Result();
-        try
-        {
+        try {
             Host host = hostDAO.getById(hostId);
             if (null == host) throw new RuntimeException("无此主机");
             if (host.getUserId() != user.getId()) throw new RuntimeException("无权添加");
@@ -313,9 +273,7 @@ public class MainController
 
             // 启动此端口的监听服务
             ProxyThreadManager.getInstance().start(port);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             result.setError(e);
         }
         return result;
@@ -324,11 +282,9 @@ public class MainController
     // 删除端口转发
     @RequestMapping("/manage/port/remove")
     @ResponseBody
-    public Result remove(@RequestParam int portId)
-    {
+    public Result remove(@RequestParam int portId) {
         Result result = new Result();
-        try
-        {
+        try {
             Port port = portDAO.getById(portId);
             if (null == port) throw new RuntimeException("无此端口设置");
             if (port.getUserId() != getLoginUser().getId()) throw new RuntimeException("无权删除");
@@ -337,9 +293,7 @@ public class MainController
 
             // 停止此端口的监听服务
             ProxyThreadManager.getInstance().stop(port);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             result.setError(e);
         }
         return result;
@@ -348,11 +302,9 @@ public class MainController
     // 启用端口转发
     @RequestMapping("/manage/port/enable")
     @ResponseBody
-    public Result enable(@RequestParam int portId)
-    {
+    public Result enable(@RequestParam int portId) {
         Result result = new Result();
-        try
-        {
+        try {
             Port port = portDAO.getById(portId);
             if (null == port) throw new RuntimeException("无此端口设置");
             if (port.getUserId() != getLoginUser().getId()) throw new RuntimeException("无权修改");
@@ -363,9 +315,7 @@ public class MainController
 
             // 开启此端口的监听服务
             ProxyThreadManager.getInstance().start(port);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             result.setError(e);
         }
         return result;
@@ -374,11 +324,9 @@ public class MainController
     // 禁用端口转发
     @RequestMapping("/manage/port/disable")
     @ResponseBody
-    public Result disable(@RequestParam int portId)
-    {
+    public Result disable(@RequestParam int portId) {
         Result result = new Result();
-        try
-        {
+        try {
             Port port = portDAO.getById(portId);
             if (null == port) throw new RuntimeException("无此端口设置");
             if (port.getUserId() != getLoginUser().getId()) throw new RuntimeException("无权修改");
@@ -389,9 +337,7 @@ public class MainController
 
             // 停止此端口的监听服务
             ProxyThreadManager.getInstance().stop(port);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             result.setError(e);
         }
         return result;

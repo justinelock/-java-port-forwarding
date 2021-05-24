@@ -9,21 +9,17 @@ import org.springframework.stereotype.Service;
  * Created by matrixy on 2017/12/12.
  */
 @Service
-public class SpringManager implements ApplicationListener<ContextRefreshedEvent>
-{
+public class SpringManager implements ApplicationListener<ContextRefreshedEvent> {
     private static ApplicationContext applicationContext = null;
 
     @Override
-    public void onApplicationEvent(ContextRefreshedEvent event)
-    {
-        if (applicationContext == null)
-        {
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (applicationContext == null) {
             applicationContext = event.getApplicationContext();
         }
     }
 
-    public static ApplicationContext getApplicationContext()
-    {
+    public static ApplicationContext getApplicationContext() {
         return applicationContext;
     }
 }

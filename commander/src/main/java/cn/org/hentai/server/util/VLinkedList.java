@@ -6,26 +6,22 @@ import java.util.LinkedList;
  * Created by matrixy on 2018/3/24.
  * 做一个简化版的链表，主要要避开使用lambda表达式
  */
-public class VLinkedList<E>
-{
+public class VLinkedList<E> {
     private int size = 0;
     private Node<E>
             first = null,              // 链表头
             last = null,               // 链表尾
             current = null;            // 当前位置
 
-    public VLinkedList()
-    {
+    public VLinkedList() {
         // ...
     }
 
-    public int size()
-    {
+    public int size() {
         return size;
     }
 
-    public void add(E item)
-    {
+    public void add(E item) {
         final Node<E> l = last;
         Node<E> node = new Node<E>(last, item, null);
         last = node;
@@ -34,23 +30,18 @@ public class VLinkedList<E>
         size++;
     }
 
-    public void remove(E item)
-    {
+    public void remove(E item) {
         Node<E> curr = first;
-        while (curr != null)
-        {
-            if (item.equals(curr.item))
-            {
-                if (size == 1)
-                {
+        while (curr != null) {
+            if (item.equals(curr.item)) {
+                if (size == 1) {
                     first = last = null;
                     break;
                 }
 
                 if (curr == first) (first = curr.next).prev = null;
                 else if (curr == last) (last = curr.prev).next = null;
-                else
-                {
+                else {
                     curr.prev.next = curr.next;
                     curr.next.prev = curr.prev;
                 }
@@ -61,50 +52,43 @@ public class VLinkedList<E>
         size--;
     }
 
-    public void traverse(ListAwalker awalker)
-    {
+    public void traverse(ListAwalker awalker) {
         Node<E> curr = first;
-        while (curr != null)
-        {
+        while (curr != null) {
             awalker.test(curr.item);
             curr = curr.next;
         }
     }
 
-    public static interface ListAwalker<E>
-    {
+    public static interface ListAwalker<E> {
         public void test(E e);
     }
 
-    public static class Node<T>
-    {
+    public static class Node<T> {
         public Node prev, next;
         public T item;
-        public Node(Node prev, T item, Node next)
-        {
+
+        public Node(Node prev, T item, Node next) {
             this.item = item;
             this.prev = prev;
             this.next = next;
         }
 
-        public String toString()
-        {
+        public String toString() {
             return "< " + (prev == null ? "null" : prev.item) + " " + item + " " + (next == null ? "null" : next.item) + " >";
         }
     }
 
-    public static void main(String[] args) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
         String a, b, c, d, e, f, g, h, i, j, k, l;
         VLinkedList list = new VLinkedList();
         ListAwalker<String> awalker = new ListAwalker<String>() {
             @Override
-            public void test(String s)
-            {
+            public void test(String s) {
                 // System.out.println("Test: " + s);
             }
-            public void dump(Node e)
-            {
+
+            public void dump(Node e) {
                 System.out.println(e);
             }
         };
@@ -134,11 +118,9 @@ public class VLinkedList<E>
         System.out.println("------------------------------");
 
 
-        list.traverse(new ListAwalker<String>()
-        {
+        list.traverse(new ListAwalker<String>() {
             @Override
-            public void test(String o)
-            {
+            public void test(String o) {
                 // if ("a".equals(o)) list.remove(o);
             }
         });

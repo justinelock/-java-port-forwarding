@@ -8,8 +8,8 @@ import static java.lang.annotation.ElementType.FIELD;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(FIELD)
-public @interface DBField
-{
+public @interface DBField {
     String name();
+
     Class type() default Object.class;
 }

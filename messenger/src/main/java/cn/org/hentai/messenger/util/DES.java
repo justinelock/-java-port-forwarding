@@ -10,10 +10,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import java.security.SecureRandom;
 
-public class DES
-{
-    public static void main(String[] args) throws Exception
-    {
+public class DES {
+    public static void main(String[] args) throws Exception {
         String data = "ve9wyarrojvhaiorgiaohjkfda";
         String password = "12345678";
         byte[] des = encrypt(data.getBytes(), password);
@@ -23,8 +21,7 @@ public class DES
         System.out.println("Decrypt:  " + ByteUtils.toString(des));
     }
 
-    public static byte[] encrypt(byte[] data, String key) throws Exception
-    {
+    public static byte[] encrypt(byte[] data, String key) throws Exception {
         SecureRandom sr = new SecureRandom();
         DESKeySpec dks = new DESKeySpec(key.getBytes());
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
@@ -34,8 +31,7 @@ public class DES
         return cipher.doFinal(data);
     }
 
-    public static byte[] decrypt(byte[] data, String key) throws Exception
-    {
+    public static byte[] decrypt(byte[] data, String key) throws Exception {
         SecureRandom sr = new SecureRandom();
         DESKeySpec dks = new DESKeySpec(key.getBytes());
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");

@@ -13,8 +13,7 @@ import java.util.Map;
 /**
  * Created by matrixy on 2018/3/22.
  */
-public class HostConnectionManager
-{
+public class HostConnectionManager {
     // 主机会话表
     Map<Integer, CommandSession> hostSessions = new HashMap<Integer, CommandSession>();
 
@@ -22,33 +21,27 @@ public class HostConnectionManager
     Map<Integer, ProxySession> proxySessions = new HashMap<Integer, ProxySession>();
 
     // 是否在线
-    public boolean isOnline(int hostId)
-    {
+    public boolean isOnline(int hostId) {
         return hostSessions.containsKey(hostId);
     }
 
-    public String getHostIp(int hostId)
-    {
+    public String getHostIp(int hostId) {
         if (!hostSessions.containsKey(hostId)) return null;
         else return hostSessions.get(hostId).getHostIP();
     }
 
     // 主机端连接时注册登记
-    public void register(int hostId, CommandSession session)
-    {
+    public void register(int hostId, CommandSession session) {
         // Log.debug("Register: " + hostId);
         // if (hostSessions.containsKey(hostId)) throw new RuntimeException("主机端己连接");
-        synchronized (hostSessions)
-        {
+        synchronized (hostSessions) {
             hostSessions.put(hostId, session);
         }
     }
 
     // 主机端的连接断开时取消注册
-    public void unregister(int hostId, CommandSession commandSession)
-    {
-        synchronized (hostSessions)
-        {
+    public void unregister(int hostId, CommandSession commandSession) {
+        synchronized (hostSessions) {
             CommandSession session = hostSessions.get(hostId);
             if (session != commandSession) return;
             hostSessions.remove(hostId);
@@ -56,19 +49,16 @@ public class HostConnectionManager
     }
 
     // 请求开始转发，返回本次转发会话的通信密钥
-    public String requestForward(ProxySession proxySession, Port port)
-    {
+    public String requestForward(ProxySession proxySession, Port port) {
         Log.debug("客户端[" + port.getId() + "]: 请求转发 " + port.getHostPort() + " 至 " + port.getListenPort());
         CommandSession commandSession = null;
-        synchronized (hostSessions)
-        {
+        synchronized (hostSessions) {
             if (!hostSessions.containsKey(port.getHostId())) throw new RuntimeException("主机端尚未连接");
             commandSession = hostSessions.get(port.getHostId());
         }
         if (null == hostSessions) throw new RuntimeException("当前无提供服务的主机连接");
         int seq = getSequence();
-        synchronized (proxySessions)
-        {
+        synchronized (proxySessions) {
             proxySessions.put(seq, proxySession);
         }
         String nonce = NonceStr.generate(64);
@@ -77,11 +67,9 @@ public class HostConnectionManager
     }
 
     // 关联到客户端的连接会话上来
-    public void attach(int sequenceId, Socket hostConnection)
-    {
+    public void attach(int sequenceId, Socket hostConnection) {
         ProxySession session = null;
-        synchronized (proxySessions)
-        {
+        synchronized (proxySessions) {
             session = proxySessions.remove(sequenceId);
         }
         if (null == session) throw new RuntimeException("无此转发请求的客户端会话");
@@ -89,14 +77,14 @@ public class HostConnectionManager
     }
 
     static int sequenceId = 0;
-    private synchronized int getSequence()
-    {
+
+    private synchronized int getSequence() {
         return ++sequenceId;
     }
 
     static HostConnectionManager manager = null;
-    public static synchronized HostConnectionManager getInstance()
-    {
+
+    public static synchronized HostConnectionManager getInstance() {
         if (null == manager) manager = new HostConnectionManager();
         return manager;
     }

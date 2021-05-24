@@ -8,8 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by matrixy on 2017/12/13.
  */
-public class BaseController
-{
+public class BaseController {
     @Autowired
     HttpServletRequest request;
 

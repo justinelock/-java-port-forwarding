@@ -13,30 +13,25 @@ import java.net.Socket;
 /**
  * Created by matrixy on 2018/3/22.
  */
-public class ForwardSession extends SocketSession
-{
+public class ForwardSession extends SocketSession {
     private Socket hostConnection;
-    public ForwardSession(Socket hostConnection)
-    {
+
+    public ForwardSession(Socket hostConnection) {
         this.hostConnection = hostConnection;
         this.setName("ForwardSession-" + hostConnection.getInetAddress());
     }
 
     @Override
-    public boolean timedout()
-    {
-        try
-        {
+    public boolean timedout() {
+        try {
             if (this.hostConnection.isClosed()) return true;
+        } catch (Exception e) {
         }
-        catch(Exception e) { }
         return false;
     }
 
-    public void run()
-    {
-        try
-        {
+    public void run() {
+        try {
             // 读取4字节，确定一下流水号
             InputStream inputStream = hostConnection.getInputStream();
             byte[] data = new byte[4];
@@ -44,22 +39,18 @@ public class ForwardSession extends SocketSession
             int sequenceId = ByteUtils.toInt(data);
             Log.debug("开始转发, 流水号: " + sequenceId);
             HostConnectionManager.getInstance().attach(sequenceId, hostConnection);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             Log.error(e);
         }
     }
 
     @Override
-    protected void converse() throws Exception
-    {
+    protected void converse() throws Exception {
         // ...
     }
 
     @Override
-    protected void release()
-    {
+    protected void release() {
         // ...
     }
 }

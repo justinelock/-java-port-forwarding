@@ -5,8 +5,7 @@ import cn.org.hentai.server.util.db.Transient;
 /**
  * Created by Expect on 2018/1/25.
  */
-public class Port
-{
+public class Port {
     // ID主键
     private int id;
 
@@ -58,13 +57,11 @@ public class Port
         this.name = name;
     }
 
-    public boolean isOnline()
-    {
+    public boolean isOnline() {
         return online;
     }
 
-    public void setOnline(boolean online)
-    {
+    public void setOnline(boolean online) {
         this.online = online;
     }
 
@@ -84,103 +81,83 @@ public class Port
         this.hostId = hostId;
     }
 
-    public int getConnectTimeout()
-    {
+    public int getConnectTimeout() {
         return connectTimeout;
     }
 
-    public void setConnectTimeout(int connectTimeout)
-    {
+    public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
-    public void setId(int id)
-    {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public int getUserId()
-    {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId)
-    {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
-    public int getListenPort()
-    {
+    public int getListenPort() {
         return listenPort;
     }
 
-    public void setListenPort(int listenPort)
-    {
+    public void setListenPort(int listenPort) {
         this.listenPort = listenPort;
     }
 
-    public int getHostPort()
-    {
+    public int getHostPort() {
         return hostPort;
     }
 
-    public void setHostPort(int hostPort)
-    {
+    public void setHostPort(int hostPort) {
         this.hostPort = hostPort;
     }
 
-    public int getState()
-    {
+    public int getState() {
         return state;
     }
 
-    public void setState(int state)
-    {
+    public void setState(int state) {
         this.state = state;
     }
 
-    public long getCreateTime()
-    {
+    public long getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(long createTime)
-    {
+    public void setCreateTime(long createTime) {
         this.createTime = createTime;
     }
 
-    public long getLastActiveTime()
-    {
+    public long getLastActiveTime() {
         return lastActiveTime;
     }
 
-    public void setLastActiveTime(long lastActiveTime)
-    {
+    public void setLastActiveTime(long lastActiveTime) {
         this.lastActiveTime = lastActiveTime;
     }
 
-    public int getSoTimeout()
-    {
+    public int getSoTimeout() {
         return soTimeout;
     }
 
-    public void setSoTimeout(int soTimeout)
-    {
+    public void setSoTimeout(int soTimeout) {
         this.soTimeout = soTimeout;
     }
 
-    public int getConcurrentConnections()
-    {
+    public int getConcurrentConnections() {
         return concurrentConnections;
     }
 
-    public void setConcurrentConnections(int concurrentConnections)
-    {
+    public void setConcurrentConnections(int concurrentConnections) {
         this.concurrentConnections = concurrentConnections;
     }
 

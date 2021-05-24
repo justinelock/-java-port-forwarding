@@ -22,13 +22,11 @@ import javax.sql.DataSource;
 @ComponentScan(value = {"cn.org.hentai"})
 @EnableAutoConfiguration
 @SpringBootApplication
-public class ServerApp
-{
+public class ServerApp {
     @Autowired
     private Environment env;
 
-    public static void main(String[] args) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
         ApplicationContext context = SpringApplication.run(ServerApp.class, args);
         BeanUtils.init(context);
         new Thread(new CommandServer()).start();
@@ -37,8 +35,7 @@ public class ServerApp
     }
 
     @Bean
-    public DataSource dataSource()
-    {
+    public DataSource dataSource() {
         SQLiteDataSource dataSource = new SQLiteDataSource();
         dataSource.setUrl(env.getProperty("spring.datasource.url"));
         return dataSource;

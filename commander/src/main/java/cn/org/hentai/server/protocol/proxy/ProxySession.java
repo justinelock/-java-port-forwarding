@@ -17,9 +17,8 @@ import java.net.SocketTimeoutException;
 /**
  * Created by Expect on 2018/1/25.
  */
-public class ProxySession extends SocketSession
-{
-    private  Object obj = new Object();
+public class ProxySession extends SocketSession {
+    private Object obj = new Object();
     private Port port;                      // 主机端ID
     private Socket clientConnection;        // 客户端连接
     private Socket hostConnection;          // 被代理的主机端连接
@@ -28,8 +27,7 @@ public class ProxySession extends SocketSession
     private int iowaitTimeout = 30000;      // 网络IO等待超时时长（毫秒）
     private String nonce = null;            // 本次转发会话的数据加解密密钥
 
-    public ProxySession(Port port, Socket clientConnection)
-    {
+    public ProxySession(Port port, Socket clientConnection) {
         this.port = port;
         this.clientConnection = clientConnection;
         this.connectTimeout = port.getConnectTimeout() * 1000;
@@ -38,8 +36,7 @@ public class ProxySession extends SocketSession
     }
 
     // 与主机端的连接关联起来
-    public void attach(Socket hostConnection)
-    {
+    public void attach(Socket hostConnection) {
         this.hostConnection = hostConnection;
         synchronized (obj) {
             obj.notify();
@@ -47,15 +44,13 @@ public class ProxySession extends SocketSession
     }
 
     @Override
-    public boolean timedout()
-    {
+    public boolean timedout() {
         if (lastExchangeTime == 0) return false;
         return System.currentTimeMillis() - lastExchangeTime > iowaitTimeout;
     }
 
     @Override
-    protected void converse() throws Exception
-    {
+    protected void converse() throws Exception {
         Log.debug("客户端: " + clientConnection.getInetAddress() + " 己连接到:" + port.getListenPort() + " ...");
 
         // 通知commandserver下发一个开始转发包到主机端
@@ -63,8 +58,7 @@ public class ProxySession extends SocketSession
 
         Log.debug("等待主机端连接...");
         long stime = System.currentTimeMillis();
-        while (this.hostConnection == null)
-        {
+        while (this.hostConnection == null) {
             synchronized (obj) {
                 obj.wait(connectTimeout);
             }
@@ -84,17 +78,14 @@ public class ProxySession extends SocketSession
         InputStream hostIS = this.hostConnection.getInputStream();
         OutputStream hostOS = this.hostConnection.getOutputStream();
 
-        while (!timedout())
-        {
+        while (!timedout()) {
             int clientBufLength = clientIS.available();
-            if (clientBufLength > 0)
-            {
+            if (clientBufLength > 0) {
                 // 客户端到主机端，需要加密后转发
                 encryptAndTransfer(clientIS, hostOS, clientBufLength);
             }
             int hostBufLength = hostIS.available();
-            if (hostBufLength >= 7)
-            {
+            if (hostBufLength >= 7) {
                 // 主机端到客户端，需要解密后转发
                 decryptAndTransfer(hostIS, clientOS, hostBufLength);
 //               如果不关闭 浏览器访问有更好的性能
@@ -107,20 +98,19 @@ public class ProxySession extends SocketSession
     }
 
     // 数据包的转发，解密后转发
-    private void decryptAndTransfer(InputStream from, OutputStream to, int byteCount) throws Exception
-    {
+    private void decryptAndTransfer(InputStream from, OutputStream to, int byteCount) throws Exception {
         int len = 4096;
         byte[] buf = new byte[4096];
         byteCount = Math.min(1024 * 64, byteCount);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(byteCount + 64);
         // 先读4字节，确定内容长度
         from.read(buf, 0, 3);
-        if ((buf[0] & 0xff) != 0xfa || (buf[1] & 0xff) != 0xfa || (buf[2] & 0xff) != 0xfa) throw new RuntimeException("错误的协议头");
+        if ((buf[0] & 0xff) != 0xfa || (buf[1] & 0xff) != 0xfa || (buf[2] & 0xff) != 0xfa)
+            throw new RuntimeException("错误的协议头");
         len = from.read(buf, 0, 4);
         if (len != 4) throw new RuntimeException("读取数据包长度失败");
         byteCount = ByteUtils.toInt(buf);
-        for (int i = 0; i < byteCount; i += len)
-        {
+        for (int i = 0; i < byteCount; i += len) {
             len = from.read(buf, 0, Math.min(4096, byteCount - i));
             baos.write(buf, 0, len);
             // to.write(buf, 0, len);
@@ -135,14 +125,12 @@ public class ProxySession extends SocketSession
     }
 
     // 数据包的转发：加密后转发
-    private void encryptAndTransfer(InputStream from, OutputStream to, int byteCount) throws Exception
-    {
+    private void encryptAndTransfer(InputStream from, OutputStream to, int byteCount) throws Exception {
         int len = 4096;
         byte[] buf = new byte[4096];
         byteCount = Math.min(1024 * 64, byteCount);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(byteCount + 64);
-        for (int i = 0; i < byteCount; i += len)
-        {
+        for (int i = 0; i < byteCount; i += len) {
             len = from.read(buf, 0, Math.min(4096, byteCount - i));
             baos.write(buf, 0, len);
             // to.write(buf, 0, len);
@@ -150,34 +138,36 @@ public class ProxySession extends SocketSession
         buf = null;
         buf = DES.encrypt(baos.toByteArray(), this.nonce);
         // buf = baos.toByteArray();
-        to.write((byte)0xfa);
-        to.write((byte)0xfa);
-        to.write((byte)0xfa);
+        to.write((byte) 0xfa);
+        to.write((byte) 0xfa);
+        to.write((byte) 0xfa);
         to.write(ByteUtils.toBytes(buf.length));
         to.write(buf);
         to.flush();
         lastExchangeTime = System.currentTimeMillis();
     }
 
-    private void sleep(int ms)
-    {
-        try
-        {
+    private void sleep(int ms) {
+        try {
             Thread.sleep(ms);
+        } catch (Exception e) {
         }
-        catch(Exception e) { }
     }
 
     @Override
-    protected void release()
-    {
-        try { clientConnection.close(); } catch(Exception e) { }
-        try { hostConnection.close(); } catch(Exception e) { }
+    protected void release() {
+        try {
+            clientConnection.close();
+        } catch (Exception e) {
+        }
+        try {
+            hostConnection.close();
+        } catch (Exception e) {
+        }
         super.release();
     }
 
-    public void terminate()
-    {
+    public void terminate() {
         release();
         super.terminate();
     }

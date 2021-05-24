@@ -5,8 +5,7 @@ import java.util.Date;
 /**
  * Created by matrixy on 2017/12/13.
  */
-public class User extends BaseModel
-{
+public class User extends BaseModel {
     private int id;
     private String name;
     private String password;

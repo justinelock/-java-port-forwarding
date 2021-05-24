@@ -10,54 +10,45 @@ import java.util.List;
  * Created by Expect on 2017/12/27.
  */
 @Repository
-public class HostDAO extends DBAccess
-{
-    public Host getById(int id)
-    {
+public class HostDAO extends DBAccess {
+    public Host getById(int id) {
         return select().byId(id).query(Host.class);
     }
 
-    public long update(Host host)
-    {
+    public long update(Host host) {
         return update().valueWith(host).byId().execute();
     }
 
-    public long delete(long id)
-    {
+    public long delete(long id) {
         return execute("delete from hosts where id = ?", id);
     }
 
-    public int save(Host host)
-    {
+    public int save(Host host) {
         int id = insertInto().valueWith(host).save();
         host.setId(id);
         return id;
     }
 
-    public List<Host> find(int userId, int pageIndex, int pageSize)
-    {
+    public List<Host> find(int userId, int pageIndex, int pageSize) {
         return select()
                 .where(clause("user_id = ?", userId))
                 .orderBy("id", "desc")
                 .queryForPaginate(Host.class, pageIndex, pageSize);
     }
 
-    public long findCount(int userId)
-    {
+    public long findCount(int userId) {
         return select()
                 .where(clause("user_id = ?", userId))
                 .queryForCount();
     }
 
     @Override
-    public String[] configureFields()
-    {
-        return new String[] { "id", "user_id", "name", "state", "accesstoken", "ip", "last_active_time" };
+    public String[] configureFields() {
+        return new String[]{"id", "user_id", "name", "state", "accesstoken", "ip", "last_active_time"};
     }
 
     @Override
-    public String configureTableName()
-    {
+    public String configureTableName() {
         return "hosts";
     }
 }
